@@ -13,6 +13,6 @@ VOLUME "/usr/share/memes"
 RUN dep ensure
 
 RUN make build
-CMD ["./discord-umad-bot"]
+CMD ["./discord-meme-storage-bot"]
 
 EXPOSE 3000
