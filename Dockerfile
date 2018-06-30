@@ -3,7 +3,7 @@ LABEL maintainer="Charles Kenney <me@chaz.codes>"
 
 ENV GOBIN /go/bin
 
-WORKDIR /go/src/github.com/Charliekenney23/discord-meme-bot
+WORKDIR /go/src/github.com/Charliekenney23/discord-meme-storage-bot
 
 COPY . .
 
