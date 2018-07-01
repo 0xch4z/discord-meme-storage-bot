@@ -49,3 +49,7 @@ func (b *bot) sendFileMessage(chanID string, file *os.File) {
 func (b *bot) AddHandler(handleFunc interface{}) {
 	b.Session.AddHandler(handleFunc)
 }
+
+func (b *bot) Listen() {
+	b.Session.Open()
+}

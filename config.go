@@ -1,6 +1,7 @@
 package main
 
 import (
+	"io/ioutil"
 	l "log"
 	"os"
 )
@@ -9,8 +10,8 @@ func init() {
 	discordConf := &discordConfig{
 		BotToken: configOption{
 			EnvironmentKey: "DMSB_DISCORT_BOT_TOKEN",
+			SecretFile:     "discord-bot-token",
 			FlagKey:        "botToken",
-			Required:       true,
 		}.Resolve(),
 	}
 
@@ -63,6 +64,7 @@ type storageConfig struct {
 
 type configOption struct {
 	EnvironmentKey string
+	SecretFile     string
 	FlagKey        string
 	DefaultValue   string
 	UsageText      string
@@ -74,6 +76,12 @@ func (o configOption) Resolve() string {
 	// val = *flag.String(o.FlagKey, "", o.UsageText)
 	if len(val) == 0 && len(o.EnvironmentKey) != 0 {
 		val = os.Getenv(o.EnvironmentKey)
+	}
+	if len(val) == 0 && len(o.SecretFile) != 0 {
+		b, err := ioutil.ReadFile("secrets/" + o.SecretFile)
+		if err == nil {
+			val = string(b)
+		}
 	}
 	if len(val) == 0 && o.Required {
 		l.Fatalf("config variable `%s` is required but undefined", o.FlagKey)

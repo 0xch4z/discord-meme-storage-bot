@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/bwmarrin/discordgo"
@@ -17,10 +18,12 @@ import (
 
 var handlePutMemeMessage = func(sess *discordgo.Session, evt *discordgo.MessageCreate) {
 	msg := evt.Message
-	switch strings.ToLower(strings.TrimSpace(msg.Content)) {
+
+	contentParts := strings.Fields(strings.TrimSpace(strings.ToLower(msg.Content)))
+
+	switch contentParts[0] {
 	case "!meme":
 		chanID := msg.ChannelID
-		contentParts := strings.Fields(msg.Content)
 
 		if !(len(contentParts) <= 2) {
 			log.WithFields(logrus.Fields{
@@ -37,8 +40,8 @@ var handlePutMemeMessage = func(sess *discordgo.Session, evt *discordgo.MessageC
 
 		name := contentParts[1]
 
-		if msg.Embeds != nil && len(msg.Embeds) != 0 && msg.Embeds[0].Image != nil {
-			uri := msg.Embeds[0].Image.URL
+		if msg.Attachments != nil && len(msg.Attachments) != 0 {
+			uri := msg.Attachments[0].URL
 			err := storage.Put(name, uri)
 			if err != nil {
 				log.WithFields(logrus.Fields{
@@ -46,10 +49,11 @@ var handlePutMemeMessage = func(sess *discordgo.Session, evt *discordgo.MessageC
 					"uri":       uri,
 					"name":      name,
 				}).Error("Could not save image")
+				memeBot.sendTextMessage(chanID, "God damnit! I couldn't save that for some reason. ):")
+				return
 			}
 
-			memeBot.sendTextMessage(chanID, "God damnit! I couldn't save that for some reason. ):")
-			return
+			memeBot.sendTextMessage(chanID, fmt.Sprintf("Cool! I saved your meme as `%s`!", name))
 		} else {
 			log.WithFields(logrus.Fields{
 				"messageId": msg.ID,
