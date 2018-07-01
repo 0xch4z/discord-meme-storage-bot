@@ -1,7 +1,12 @@
 package main
 
 import (
+	"io"
+	"net/http"
+	"os"
 	"time"
+
+	"github.com/sirupsen/logrus"
 )
 
 func init() {
@@ -71,6 +76,39 @@ func (f *fsService) Get(name string) error {
 
 // @TODO
 func (f *fsService) Put(name, uri string) error {
+	res, err := http.Get(uri)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"uri":          uri,
+			"errorMessage": err.Error(),
+		}).Errorf("could not get image at uri `%s`", uri)
+		return err
+	}
+
+	defer res.Body.Close()
+
+	fPath := "/usr/share/memes/" + name
+	fHandle, err := os.Create(fPath)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"dest":         fPath,
+			"errorMessage": err.Error(),
+		}).Errorf("could not create file")
+		return err
+	}
+
+	defer fHandle.Close()
+
+	_, err = io.Copy(fHandle, res.Body)
+	if err != nil {
+		return err
+	}
+
+	log.WithFields(logrus.Fields{
+		"uri":  uri,
+		"dest": fPath,
+	}).Info("successfully saved image")
+
 	return nil
 }
 

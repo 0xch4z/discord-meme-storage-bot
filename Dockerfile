@@ -7,8 +7,9 @@ WORKDIR /go/src/github.com/Charliekenney23/discord-meme-storage-bot
 
 COPY . .
 
-RUN mkdir /usr/share/memes
-VOLUME "/usr/share/memes"
+RUN mkdir /usr/share/memes /usr/share/db
+RUN /usr/share/db/dmsb.db
+VOLUME ["/usr/share/memes", "/usr/share/db"]
 
 RUN dep ensure
 

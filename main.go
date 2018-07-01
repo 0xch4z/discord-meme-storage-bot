@@ -1,5 +1,6 @@
 package main
 
 func main() {
-	log.Info("test")
+	memeBot = newBot(conf.Discord.BotToken)
+	memeBot.AddHandler(handlePutMemeMessage)
 }
