@@ -4,6 +4,7 @@ import (
 	"io/ioutil"
 	l "log"
 	"os"
+	"strings"
 )
 
 func init() {
@@ -80,7 +81,7 @@ func (o configOption) Resolve() string {
 	if len(val) == 0 && len(o.SecretFile) != 0 {
 		b, err := ioutil.ReadFile("secrets/" + o.SecretFile)
 		if err == nil {
-			val = string(b)
+			val = strings.TrimSpace(string(b))
 		}
 	}
 	if len(val) == 0 && o.Required {
