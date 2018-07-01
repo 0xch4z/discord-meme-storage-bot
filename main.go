@@ -4,6 +4,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/sirupsen/logrus"
 )
 
 func main() {
@@ -12,7 +14,7 @@ func main() {
 	memeBot.AddHandler(handleGetMemeMessage)
 	memeBot.Listen()
 
-	log.Info("Bot has booted")
+	log.WithFields(logrus.Fields{"token": conf.Discord.BotToken}).Info("Bot has booted")
 	sc := make(chan os.Signal, 1)
 	signal.Notify(sc, syscall.SIGINT, syscall.SIGTERM, os.Interrupt, os.Kill)
 	<-sc
