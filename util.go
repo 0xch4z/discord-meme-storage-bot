@@ -32,7 +32,6 @@ func retryOnBadGateway(fn func() error) {
 func getContentType(file *os.File) (string, error) {
 	buf := make([]byte, 512)
 	_, err := file.Read(buf)
-	defer file.Close()
 	if err != nil {
 		return "", err
 	}
@@ -42,7 +41,7 @@ func getContentType(file *os.File) (string, error) {
 	return http.DetectContentType(buf), nil
 }
 
-func wrapFile(file *os.File) *discordgo.File {
+func wrapDiscordFile(file *os.File) *discordgo.File {
 	contype, err := getContentType(file)
 	if err != nil {
 		log.Errorf("failed to detect content type for file `%s`; letting http infer", file.Name())

@@ -22,7 +22,7 @@ func init() {
 var storage storageService
 
 type storageService interface {
-	Get(name string) error
+	Get(name string) (*os.File, error)
 	Put(name, uri string) error
 	Exists(name string) (bool, error)
 	List() ([]string, error)
@@ -50,8 +50,8 @@ type fsService struct {
 }
 
 // @TODO
-func (s *s3Service) Get(name string) error {
-	return nil
+func (s *s3Service) Get(name string) (*os.File, error) {
+	return nil, nil
 }
 
 // @TODO
@@ -70,8 +70,21 @@ func (s *s3Service) List() ([]string, error) {
 }
 
 // @TODO
-func (f *fsService) Get(name string) error {
-	return nil
+func (f *fsService) Get(name string) (*os.File, error) {
+	fPath := "/usr/share/memes/" + name + ".jpg"
+	fHandle, err := os.Open(fPath)
+	if err != nil {
+		log.WithFields(logrus.Fields{
+			"path":         fPath,
+			"errorMessage": err.Error(),
+		}).Error("could not load file")
+		return nil, err
+	}
+
+	log.WithFields(logrus.Fields{
+		"path": fPath,
+	}).Error("successfully got image")
+	return fHandle, nil
 }
 
 // @TODO
@@ -87,7 +100,7 @@ func (f *fsService) Put(name, uri string) error {
 
 	defer res.Body.Close()
 
-	fPath := "/usr/share/memes/" + name
+	fPath := "/usr/share/memes/" + name + ".jpg"
 	fHandle, err := os.Create(fPath)
 	if err != nil {
 		log.WithFields(logrus.Fields{

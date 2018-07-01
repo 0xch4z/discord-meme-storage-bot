@@ -40,8 +40,11 @@ func (b *bot) sendFileMessage(chanID string, file *os.File) {
 		"channelID": chanID,
 		"fileName":  file.Name,
 	}).Info("Sending file message")
+	wrappedFile := wrapDiscordFile(file)
 	retryOnBadGateway(func() error {
-		_, err := b.Session.ChannelFileSend(chanID, file.Name(), file)
+		_, err := b.Session.ChannelMessageSendComplex(chanID, &discordgo.MessageSend{
+			File: wrappedFile,
+		})
 		return err
 	})
 }
