@@ -9,6 +9,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
+const storageRoot = "/var/memes"
+
 func init() {
 	s3URI := conf.Storage.S3StorageBucketURI
 
@@ -71,7 +73,7 @@ func (s *s3Service) List() ([]string, error) {
 
 // @TODO
 func (f *fsService) Get(name string) (*os.File, error) {
-	fPath := "/usr/share/memes/" + name + ".jpg"
+	fPath := storageRoot + name + ".jpg"
 	fHandle, err := os.Open(fPath)
 	if err != nil {
 		log.WithFields(logrus.Fields{
@@ -100,7 +102,7 @@ func (f *fsService) Put(name, uri string) error {
 
 	defer res.Body.Close()
 
-	fPath := "/usr/share/memes/" + name + ".jpg"
+	fPath := storageRoot + name + ".jpg"
 	fHandle, err := os.Create(fPath)
 	if err != nil {
 		log.WithFields(logrus.Fields{

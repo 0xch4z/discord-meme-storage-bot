@@ -3,4 +3,5 @@
 *.a
 *.o
 *.env
+volumes
 secrets/discord-bot-token

@@ -53,3 +53,8 @@ func wrapDiscordFile(file *os.File) *discordgo.File {
 		ContentType: contype,
 	}
 }
+
+func dateSlug() string {
+	t := time.Now()
+	return t.Format("2006-01-02_15-04-05")
+}

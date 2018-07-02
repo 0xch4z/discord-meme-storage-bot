@@ -35,10 +35,19 @@ func init() {
 		}.Resolve(),
 	}
 
+	dbConf := &dbConfig{
+		RootPassword: configOption{
+			EnvironmentKey: "DMSB_DB_MYSQL_ROOT_PASSWORD",
+			SecretFile:     "mysql-root-password",
+			FlagKey:        "mySQLRootPassword",
+		}.Resolve(),
+	}
+
 	conf = &config{
 		Discord: discordConf,
 		Logger:  loggerConf,
 		Storage: storageConf,
+		DB:      dbConf,
 	}
 }
 
@@ -48,6 +57,7 @@ type config struct {
 	Discord *discordConfig
 	Logger  *loggerConfig
 	Storage *storageConfig
+	DB      *dbConfig
 }
 
 type discordConfig struct {
@@ -57,6 +67,10 @@ type discordConfig struct {
 type loggerConfig struct {
 	Level string
 	File  string
+}
+
+type dbConfig struct {
+	RootPassword string
 }
 
 type storageConfig struct {
