@@ -1,11 +1,31 @@
-version: "3.1"
+version: '3.1'
 
 services:
   bot:
-    image: dmsb:1.0.0
+    build: .
+    volumes:
+      - './volumes/memes:/var/memes'
     secrets:
+      - mysql-root-password
       - discord-bot-token
+    depends_on:
+      - db
+    links:
+      - db:db
+
+  db:
+    image: mysql
+    environment:
+      MYSQL_USER: root
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: dmsb
+    ports:
+      - '3306:3306'
+    volumes:
+      - './volumes/db:/var/lib/mysql'
 
 secrets:
+  mysql-root-password:
+    file: ./secrets/mysql-root-password
   discord-bot-token:
-    file: secrets/discord-bot-token
+    file: ./secrets/discord-bot-token
